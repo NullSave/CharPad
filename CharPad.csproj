@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>CharPad</AssemblyName>
+    <RootNamespace>NullSave.CharPad</RootNamespace>
+    <Version>1.0.0</Version>
+    <Product>CharPad</Product>
+    <Description>Character map with a resizable window and adjustable glyph size</Description>
+    <ApplicationIcon>CharPad.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Title>CharPad</Title>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="CharPad.ico" />
+  </ItemGroup>
+
+</Project>

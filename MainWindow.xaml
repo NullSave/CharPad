@@ -1,0 +1,177 @@
+<Window x:Class="NullSave.CharPad.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:NullSave.CharPad"
+        Title="CharPad" Width="1000" Height="720" MinWidth="640" MinHeight="460"
+        FontSize="15" Icon="CharPad.ico"
+        Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="14,4"/>
+            <Setter Property="MinWidth" Value="84"/>
+            <Setter Property="Margin" Value="8,0,0,0"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="4,3"/>
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="6,4"/>
+        </Style>
+        <Style x:Key="Caption" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,8,0"/>
+        </Style>
+        <Style x:Key="InfoText" TargetType="TextBox">
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="IsTabStop" Value="False"/>
+        </Style>
+    </Window.Resources>
+
+    <DockPanel>
+        <StatusBar DockPanel.Dock="Bottom" FontSize="15" Padding="6,2">
+            <StatusBarItem DockPanel.Dock="Right">
+                <TextBlock x:Name="CountText"/>
+            </StatusBarItem>
+            <Separator DockPanel.Dock="Right"/>
+            <StatusBarItem DockPanel.Dock="Right">
+                <TextBlock x:Name="KeystrokeText" MinWidth="140"/>
+            </StatusBarItem>
+            <Separator DockPanel.Dock="Right"/>
+            <StatusBarItem>
+                <TextBlock x:Name="StatusText" TextTrimming="CharacterEllipsis"/>
+            </StatusBarItem>
+        </StatusBar>
+
+        <Grid Margin="12,10,12,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Font and size -->
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*" MaxWidth="460"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Font:" Style="{StaticResource Caption}"/>
+                <ComboBox x:Name="FontCombo" Grid.Column="1" IsTextSearchEnabled="True">
+                    <ComboBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel/>
+                        </ItemsPanelTemplate>
+                    </ComboBox.ItemsPanel>
+                </ComboBox>
+                <TextBlock Grid.Column="2" Text="Size:" Style="{StaticResource Caption}" Margin="20,0,8,0"/>
+                <ComboBox x:Name="SizeCombo" Grid.Column="3" Width="90" IsEditable="True" ToolTip="Glyph size in points (Ctrl+mouse wheel also zooms)"/>
+                <Button x:Name="SmallerButton" Grid.Column="4" Content="A−" MinWidth="48" ToolTip="Smaller (Ctrl+Minus)"/>
+                <Button x:Name="LargerButton" Grid.Column="5" Content="A+" MinWidth="48" ToolTip="Larger (Ctrl+Plus)"/>
+            </Grid>
+
+            <!-- Character grid and preview -->
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" MinWidth="200"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition x:Name="PreviewColumn" Width="300" MinWidth="160"/>
+                </Grid.ColumnDefinitions>
+                <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}">
+                    <local:CharGrid x:Name="Chars"/>
+                </Border>
+                <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Background="Transparent" ResizeBehavior="PreviousAndNext"/>
+                <Border Grid.Column="2" BorderThickness="1"
+                        BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
+                        Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" MinHeight="120"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <local:GlyphPreview x:Name="Preview"/>
+                        <StackPanel Grid.Row="1" Margin="14,4,14,14">
+                            <TextBox x:Name="NameText" Style="{StaticResource InfoText}" FontSize="18" FontWeight="SemiBold"/>
+                            <TextBox x:Name="DetailsText" Style="{StaticResource InfoText}" Margin="0,8,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- Characters to copy -->
+            <Grid Grid.Row="2" Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Characters to copy:" Style="{StaticResource Caption}"/>
+                <TextBox x:Name="CopyText" Grid.Column="1" FontSize="16"/>
+                <Button x:Name="SelectButton" Grid.Column="2" FontSize="16" Content="_Select" ToolTip="Add the selected character (or double-click / press Enter in the grid)"/>
+                <Button x:Name="CopyButton" Grid.Column="3" FontSize="16" Content="_Copy" ToolTip="Copy to the clipboard, keeping the font for rich-text apps"/>
+            </Grid>
+
+            <CheckBox x:Name="AdvancedCheck" Grid.Row="3" Content="Ad_vanced view" Margin="0,10,0,0" VerticalContentAlignment="Center"/>
+
+            <!-- Advanced view -->
+            <Grid x:Name="AdvancedPanel" Grid.Row="4" Margin="0,10,0,0" Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Character set:" Style="{StaticResource Caption}"/>
+                <ComboBox x:Name="CharsetCombo" Grid.Column="1"/>
+                <TextBlock Grid.Column="2" Text="Go to Unicode:" Style="{StaticResource Caption}" Margin="20,0,8,0"/>
+                <StackPanel Grid.Column="3" Orientation="Horizontal">
+                    <TextBox x:Name="GotoText" Width="120" ToolTip="Hex code, e.g. 00A9 or U+1F600"/>
+                    <Button x:Name="GotoButton" Content="Go" MinWidth="60"/>
+                </StackPanel>
+
+                <TextBlock Grid.Row="1" Text="Group by:" Style="{StaticResource Caption}" Margin="0,8,8,0"/>
+                <Grid Grid.Row="1" Grid.Column="1" Margin="0,8,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <ComboBox x:Name="GroupByCombo"/>
+                    <ComboBox x:Name="GroupCombo" Grid.Column="1" Margin="8,0,0,0" IsEnabled="False">
+                        <ComboBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel/>
+                            </ItemsPanelTemplate>
+                        </ComboBox.ItemsPanel>
+                    </ComboBox>
+                </Grid>
+
+                <TextBlock Grid.Row="2" Text="Search for:" Style="{StaticResource Caption}" Margin="0,8,8,0"/>
+                <TextBox x:Name="SearchText" Grid.Row="2" Grid.Column="1" Margin="0,8,0,0"
+                         ToolTip="Words in the character name, a single character, or U+code"/>
+                <StackPanel Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,8,0,0">
+                    <Button x:Name="SearchButton" Content="Search"/>
+                    <Button x:Name="ClearButton" Content="Clear"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </DockPanel>
+</Window>
